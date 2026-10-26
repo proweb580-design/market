@@ -114,7 +114,7 @@ export default function HomePage() {
       <section aria-labelledby="popular" className="space-y-6">
         <SectionHead id="popular" eyebrow="Наши товары" title="Популярные товары" />
         <div className="grid grid-cols-2 gap-x-3 gap-y-6 md:grid-cols-3 lg:grid-cols-4">
-          {products.map((p) => (
+          {products.filter((p) => p.featured).map((p) => (
             <ProductCard key={p.slug} product={p} />
           ))}
         </div>

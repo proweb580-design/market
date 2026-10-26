@@ -20,6 +20,10 @@
 ## Запуск
 ```
 npm install
+# один раз: вставить строку Neon в .env.local (шаблон — .env.example)
+npm run db:migrate   # создать таблицы
+npm run db:seed      # загрузить тестовые товары (можно повторять)
+npm run db:check     # проверить чтение/запись
 npm run dev
 ```
 Открыть http://localhost:3000
