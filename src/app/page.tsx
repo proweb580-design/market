@@ -1,72 +1,125 @@
 import Link from "next/link";
 import { LinkButton } from "@/components/ui/Button";
 import { ProductCard } from "@/components/ProductCard";
+import { Countdown } from "@/components/Countdown";
+import { formatUZS } from "@/lib/format";
 import { categories, products } from "@/lib/mock-data";
 
-export default function HomePage() {
+function SectionHead({ id, eyebrow, title, action }: { id: string; eyebrow: string; title: string; action?: React.ReactNode }) {
   return (
-    <div className="space-y-12">
-      {/* Hero */}
-      <section className="relative overflow-hidden rounded-bento border border-line bg-gradient-to-br from-accent/25 via-card to-accent-2/15 px-6 py-12 md:px-12 md:py-16">
-        <p className="text-sm font-medium text-accent-2">Новинки сезона</p>
-        <h1 className="mt-3 max-w-xl text-3xl font-bold leading-tight md:text-5xl">Техника, которую хочется выбрать сразу</h1>
-        <p className="mt-4 max-w-lg text-muted">Смартфоны, ноутбуки и аудио с честными ценами в сумах и доставкой по Ташкенту.</p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <LinkButton href="/catalog">Перейти в каталог</LinkButton>
-          <LinkButton href="/catalog?sort=discount" variant="secondary">Скидки</LinkButton>
+    <div className="flex items-end justify-between gap-4">
+      <div>
+        <p className="flex items-center gap-2 text-xs font-medium text-accent">
+          <span aria-hidden className="size-2 rounded-full bg-accent" />
+          {eyebrow}
+        </p>
+        <h2 id={id} className="mt-1 text-2xl font-semibold">{title}</h2>
+      </div>
+      {action}
+    </div>
+  );
+}
+
+export default function HomePage() {
+  const hero = products.find((p) => p.slug === "sony-wh-1000xm5") ?? products[0];
+
+  return (
+    <div className="space-y-16">
+      {/* Hero: text left, big product with price bubble right */}
+      <section className="relative overflow-hidden rounded-bento border border-line bg-gradient-to-br from-card via-card to-accent/20">
+        <div className="grid items-center gap-8 px-6 py-10 md:grid-cols-2 md:px-12 md:py-14">
+          <div>
+            <p className="inline-flex items-center gap-2 text-xs font-medium text-danger">
+              <span aria-hidden className="flex size-5 items-center justify-center rounded-full bg-danger/15">🔥</span>
+              Горячее предложение недели
+            </p>
+            <h1 className="mt-4 text-3xl font-bold leading-tight md:text-5xl">
+              {hero.brand} <span className="whitespace-nowrap">{hero.name}</span>
+            </h1>
+            <p className="mt-3 text-muted">Беспроводные наушники с шумоподавлением</p>
+            <div className="mt-8 flex flex-wrap items-center gap-5">
+              <LinkButton href={`/product/${hero.slug}`}>
+                <span aria-hidden>🛒</span> Купить
+              </LinkButton>
+              <div className="text-xs text-muted">
+                <span className="text-sm text-amber-400" aria-label="Рейтинг 4 из 5">★★★★☆</span>
+                <p>100+ отзывов</p>
+              </div>
+            </div>
+          </div>
+          <div className="relative flex justify-center">
+            <span aria-hidden className="absolute inset-x-10 inset-y-4 -rotate-6 rounded-bento bg-accent/15" />
+            <span aria-hidden className="relative text-[140px] leading-none md:text-[200px]">{hero.icon}</span>
+            <p className="absolute right-4 top-0 flex size-24 flex-col items-center justify-center rounded-full bg-text px-2 text-center text-bg shadow-lg md:right-10">
+              <span className="text-[10px] text-bg/60">от</span>
+              <span className="text-[11px] font-bold leading-tight">{formatUZS(hero.priceUzs)}</span>
+            </p>
+          </div>
         </div>
-        <span aria-hidden className="pointer-events-none absolute -bottom-6 right-4 hidden text-[160px] opacity-80 md:block">📱</span>
       </section>
 
-      {/* Categories */}
-      <section aria-labelledby="cats">
-        <h2 id="cats" className="text-xl font-semibold">Категории</h2>
-        <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      {/* Categories: square tiles, icon above name */}
+      <section aria-labelledby="cats" className="space-y-6">
+        <SectionHead id="cats" eyebrow="Категории" title="Выберите категорию" />
+        <ul className="grid grid-cols-3 gap-3 sm:grid-cols-5">
           {categories.map((c) => (
             <li key={c.slug}>
-              <Link href={`/category/${c.slug}`} className="flex items-center gap-3 rounded-card border border-line bg-card p-4 transition-colors hover:border-white/20 hover:bg-surface">
-                <span aria-hidden className="text-2xl">{c.icon}</span>
-                <span className="text-sm font-medium">{c.name}</span>
+              <Link
+                href={`/category/${c.slug}`}
+                className="flex aspect-square flex-col items-center justify-center gap-2 rounded-card border border-line bg-card p-3 text-center transition-colors hover:border-accent/50 hover:bg-surface sm:aspect-auto sm:py-6"
+              >
+                <span aria-hidden className="text-3xl">{c.icon}</span>
+                <span className="text-xs font-medium sm:text-sm">{c.name}</span>
               </Link>
             </li>
           ))}
         </ul>
       </section>
 
-      {/* Bento promo */}
-      <section aria-label="Акции" className="grid auto-rows-[minmax(160px,auto)] gap-3 md:grid-cols-4">
-        <Link href="/category/laptops" className="flex flex-col justify-end rounded-bento border border-line bg-gradient-to-br from-accent/30 to-card p-6 hover:border-white/20 md:col-span-2 md:row-span-2">
-          <span aria-hidden className="mb-auto text-7xl">💻</span>
-          <h3 className="mt-6 text-2xl font-bold">Ноутбуки для учёбы и работы</h3>
-          <p className="mt-1 text-sm text-muted">Скидки до 15% на MacBook и ультрабуки</p>
-        </Link>
-        <Link href="/category/headphones" className="flex flex-col justify-between rounded-bento border border-line bg-card p-6 hover:border-white/20 md:col-span-2">
-          <span aria-hidden className="text-4xl">🎧</span>
+      {/* Promo bento: big block with countdown + two small tiles */}
+      <section aria-label="Акции" className="grid gap-3 md:grid-cols-3">
+        <div className="grid items-center gap-6 rounded-bento border border-line bg-surface p-8 sm:grid-cols-[1fr_auto] md:col-span-2 md:p-10">
           <div>
-            <h3 className="text-lg font-semibold">Звук без проводов</h3>
-            <p className="text-sm text-muted">Наушники с шумоподавлением</p>
+            <p className="flex items-center gap-2 text-xs font-medium text-danger">
+              <span aria-hidden className="size-2 rounded-full bg-danger" />
+              Не пропустите!
+            </p>
+            <h2 className="mt-3 text-2xl font-bold md:text-3xl">Звук, который вы почувствуете</h2>
+            <div className="mt-6">
+              <Countdown />
+            </div>
+            <LinkButton href="/category/headphones" className="mt-8">Смотреть</LinkButton>
           </div>
-        </Link>
-        <Link href="/category/tv" className="flex flex-col justify-between rounded-bento border border-line bg-gradient-to-br from-accent-2/20 to-card p-6 hover:border-white/20">
-          <span aria-hidden className="text-4xl">📺</span>
-          <h3 className="text-lg font-semibold">OLED-телевизоры</h3>
-        </Link>
-        <Link href="/compare" className="flex flex-col justify-between rounded-bento border border-line bg-surface p-6 hover:border-white/20">
-          <span aria-hidden className="text-4xl">⇄</span>
-          <h3 className="text-lg font-semibold">Сравните до 4 моделей</h3>
-        </Link>
+          <span aria-hidden className="hidden text-[150px] leading-none sm:block">🎧</span>
+        </div>
+        <div className="grid gap-3">
+          <Link href="/category/laptops" className="flex items-center justify-between rounded-bento border border-line bg-gradient-to-br from-accent/25 to-card p-6 hover:border-white/20">
+            <div>
+              <h3 className="text-lg font-semibold">Ноутбуки</h3>
+              <p className="text-sm text-muted">Скидки до 15%</p>
+            </div>
+            <span aria-hidden className="text-5xl">💻</span>
+          </Link>
+          <Link href="/category/tv" className="flex items-center justify-between rounded-bento border border-line bg-gradient-to-br from-accent-2/20 to-card p-6 hover:border-white/20">
+            <div>
+              <h3 className="text-lg font-semibold">OLED-телевизоры</h3>
+              <p className="text-sm text-muted">Глубокий чёрный</p>
+            </div>
+            <span aria-hidden className="text-5xl">📺</span>
+          </Link>
+        </div>
       </section>
 
-      {/* Popular */}
-      <section aria-labelledby="popular">
-        <div className="flex items-baseline justify-between">
-          <h2 id="popular" className="text-xl font-semibold">Популярные товары</h2>
-          <Link href="/catalog" className="text-sm text-accent hover:underline">Все товары →</Link>
-        </div>
-        <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+      {/* Products */}
+      <section aria-labelledby="popular" className="space-y-6">
+        <SectionHead id="popular" eyebrow="Наши товары" title="Популярные товары" />
+        <div className="grid grid-cols-2 gap-x-3 gap-y-6 md:grid-cols-3 lg:grid-cols-4">
           {products.map((p) => (
             <ProductCard key={p.slug} product={p} />
           ))}
+        </div>
+        <div className="flex justify-center">
+          <LinkButton href="/catalog" variant="secondary">Все товары</LinkButton>
         </div>
       </section>
     </div>
