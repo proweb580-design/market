@@ -1,103 +1,74 @@
-import Image from "next/image";
+import Link from "next/link";
+import { LinkButton } from "@/components/ui/Button";
+import { ProductCard } from "@/components/ProductCard";
+import { categories, products } from "@/lib/mock-data";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="space-y-12">
+      {/* Hero */}
+      <section className="relative overflow-hidden rounded-bento border border-line bg-gradient-to-br from-accent/25 via-card to-accent-2/15 px-6 py-12 md:px-12 md:py-16">
+        <p className="text-sm font-medium text-accent-2">Новинки сезона</p>
+        <h1 className="mt-3 max-w-xl text-3xl font-bold leading-tight md:text-5xl">Техника, которую хочется выбрать сразу</h1>
+        <p className="mt-4 max-w-lg text-muted">Смартфоны, ноутбуки и аудио с честными ценами в сумах и доставкой по Ташкенту.</p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <LinkButton href="/catalog">Перейти в каталог</LinkButton>
+          <LinkButton href="/catalog?sort=discount" variant="secondary">Скидки</LinkButton>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <span aria-hidden className="pointer-events-none absolute -bottom-6 right-4 hidden text-[160px] opacity-80 md:block">📱</span>
+      </section>
+
+      {/* Categories */}
+      <section aria-labelledby="cats">
+        <h2 id="cats" className="text-xl font-semibold">Категории</h2>
+        <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {categories.map((c) => (
+            <li key={c.slug}>
+              <Link href={`/category/${c.slug}`} className="flex items-center gap-3 rounded-card border border-line bg-card p-4 transition-colors hover:border-white/20 hover:bg-surface">
+                <span aria-hidden className="text-2xl">{c.icon}</span>
+                <span className="text-sm font-medium">{c.name}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Bento promo */}
+      <section aria-label="Акции" className="grid auto-rows-[minmax(160px,auto)] gap-3 md:grid-cols-4">
+        <Link href="/category/laptops" className="flex flex-col justify-end rounded-bento border border-line bg-gradient-to-br from-accent/30 to-card p-6 hover:border-white/20 md:col-span-2 md:row-span-2">
+          <span aria-hidden className="mb-auto text-7xl">💻</span>
+          <h3 className="mt-6 text-2xl font-bold">Ноутбуки для учёбы и работы</h3>
+          <p className="mt-1 text-sm text-muted">Скидки до 15% на MacBook и ультрабуки</p>
+        </Link>
+        <Link href="/category/headphones" className="flex flex-col justify-between rounded-bento border border-line bg-card p-6 hover:border-white/20 md:col-span-2">
+          <span aria-hidden className="text-4xl">🎧</span>
+          <div>
+            <h3 className="text-lg font-semibold">Звук без проводов</h3>
+            <p className="text-sm text-muted">Наушники с шумоподавлением</p>
+          </div>
+        </Link>
+        <Link href="/category/tv" className="flex flex-col justify-between rounded-bento border border-line bg-gradient-to-br from-accent-2/20 to-card p-6 hover:border-white/20">
+          <span aria-hidden className="text-4xl">📺</span>
+          <h3 className="text-lg font-semibold">OLED-телевизоры</h3>
+        </Link>
+        <Link href="/compare" className="flex flex-col justify-between rounded-bento border border-line bg-surface p-6 hover:border-white/20">
+          <span aria-hidden className="text-4xl">⇄</span>
+          <h3 className="text-lg font-semibold">Сравните до 4 моделей</h3>
+        </Link>
+      </section>
+
+      {/* Popular */}
+      <section aria-labelledby="popular">
+        <div className="flex items-baseline justify-between">
+          <h2 id="popular" className="text-xl font-semibold">Популярные товары</h2>
+          <Link href="/catalog" className="text-sm text-accent hover:underline">Все товары →</Link>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+          {products.map((p) => (
+            <ProductCard key={p.slug} product={p} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

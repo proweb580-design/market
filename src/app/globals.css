@@ -1,26 +1,55 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Design tokens from SPEC.md §3 */
+@theme {
+  --color-bg: #0b0d12;
+  --color-card: #141821;
+  --color-surface: #1b2130;
+  --color-text: #f5f7fb;
+  --color-muted: #9aa4b2;
+  --color-accent: #6d7cff;
+  --color-accent-2: #31c7bc;
+  --color-success: #36b37e;
+  --color-danger: #ff647c;
+  --color-line: rgba(255, 255, 255, 0.09);
+
+  --radius-btn: 12px;
+  --radius-card: 16px;
+  --radius-bento: 20px;
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
+  scroll-padding-top: 8rem; /* keep anchor targets below the sticky header */
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 16px;
+  @media (width >= 48rem) {
+    padding-inline: 24px;
+  }
 }
