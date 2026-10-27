@@ -3,6 +3,7 @@ import Image from "next/image";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { toggleCompare, toggleFavorite } from "@/app/actions";
+import { AddToCart } from "@/components/AddToCart";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { COMPARE_MAX, FAVORITES_MAX, parseIds } from "@/lib/id-list";
@@ -88,7 +89,10 @@ export default async function ProductPage({ params }: Props) {
             <p className={`mt-3 text-sm ${inStock ? "text-success" : "text-muted"}`}>
               {inStock ? `В наличии: ${product.stockQuantity} шт.` : "Нет в наличии"}
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-4">
+              <AddToCart productId={product.id} stock={product.stockQuantity} />
+            </div>
+            <div className="flex flex-wrap gap-2">
               <form action={toggleFavorite}>
                 <input type="hidden" name="productId" value={product.id} />
                 <Button type="submit" variant="secondary" aria-pressed={isFavorite}>

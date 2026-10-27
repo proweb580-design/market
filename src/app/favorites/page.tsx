@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { toggleFavorite } from "@/app/actions";
+import { AddToCart } from "@/components/AddToCart";
 import { ProductCard } from "@/components/ProductCard";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { getProductsByIds } from "@/lib/catalog";
@@ -26,7 +27,8 @@ export default async function Page() {
           {items.map((p) => (
             <li key={p.id} className="flex flex-col gap-3">
               <ProductCard product={p} />
-              <form action={toggleFavorite}>
+              <AddToCart productId={p.id} stock={p.stockQuantity} withQuantity={false} />
+              <form action={toggleFavorite} className="-mt-2">
                 <input type="hidden" name="productId" value={p.id} />
                 <Button type="submit" variant="ghost" className="w-full">Удалить</Button>
               </form>
