@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import { toggleCompare, toggleFavorite } from "@/app/actions";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { Button } from "@/components/ui/Button";
+import { COMPARE_MAX, FAVORITES_MAX, parseIds } from "@/lib/id-list";
 import { ProductCard } from "@/components/ProductCard";
 import { Badge } from "@/components/ui/Badge";
 import { getProductBySlug, getSimilarProducts } from "@/lib/catalog";
@@ -23,7 +27,11 @@ export default async function ProductPage({ params }: Props) {
   const row = await getProductBySlug((await params).slug);
   if (!row) notFound();
   const { product, category } = row;
-  const similar = await getSimilarProducts(product.categoryId, product.id);
+  const [similar, store] = await Promise.all([getSimilarProducts(product.categoryId, product.id), cookies()]);
+  const isFavorite = parseIds(store.get("favorites")?.value, FAVORITES_MAX).includes(product.id);
+  const compareIds = parseIds(store.get("compare")?.value, COMPARE_MAX);
+  const inCompare = compareIds.includes(product.id);
+  const compareFull = !inCompare && compareIds.length >= COMPARE_MAX;
   const discount = discountPercent(product.priceUzs, product.oldPriceUzs);
   const inStock = product.stockQuantity > 0;
   const specs = Object.entries(product.specifications);
@@ -80,6 +88,20 @@ export default async function ProductPage({ params }: Props) {
             <p className={`mt-3 text-sm ${inStock ? "text-success" : "text-muted"}`}>
               {inStock ? `В наличии: ${product.stockQuantity} шт.` : "Нет в наличии"}
             </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <form action={toggleFavorite}>
+                <input type="hidden" name="productId" value={product.id} />
+                <Button type="submit" variant="secondary" aria-pressed={isFavorite}>
+                  {isFavorite ? "♥ В избранном" : "♡ В избранное"}
+                </Button>
+              </form>
+              <form action={toggleCompare}>
+                <input type="hidden" name="productId" value={product.id} />
+                <Button type="submit" variant="secondary" aria-pressed={inCompare} disabled={compareFull}>
+                  {inCompare ? "⇄ В сравнении" : compareFull ? `Сравнение заполнено (${COMPARE_MAX})` : "⇄ Сравнить"}
+                </Button>
+              </form>
+            </div>
           </div>
 
           {specs.length > 0 && (

@@ -143,6 +143,16 @@ export function getSimilarProducts(categoryId: number, excludeId: number, limit 
     .limit(limit);
 }
 
+// Keeps the caller's order (the order items were added to compare/favorites).
+export async function getProductsByIds(ids: number[]) {
+  if (ids.length === 0) return [];
+  const rows = await db
+    .select({ ...listColumns, specifications: products.specifications })
+    .from(products)
+    .where(and(inArray(products.id, ids), eq(products.isActive, true)));
+  return ids.flatMap((id) => rows.find((r) => r.id === id) ?? []);
+}
+
 export function getFeaturedProducts(limit = 8) {
   return db
     .select(listColumns)
