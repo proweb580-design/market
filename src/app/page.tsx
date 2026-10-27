@@ -1,9 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 import { LinkButton } from "@/components/ui/Button";
 import { ProductCard } from "@/components/ProductCard";
 import { Countdown } from "@/components/Countdown";
 import { formatUZS } from "@/lib/format";
-import { categories, products } from "@/lib/mock-data";
+import { getCategories, getFeaturedProducts, getProductBySlug } from "@/lib/catalog";
 
 function SectionHead({ id, eyebrow, title, action }: { id: string; eyebrow: string; title: string; action?: React.ReactNode }) {
   return (
@@ -20,13 +21,17 @@ function SectionHead({ id, eyebrow, title, action }: { id: string; eyebrow: stri
   );
 }
 
-export default function HomePage() {
-  const hero = products.find((p) => p.slug === "sony-wh-1000xm5") ?? products[0];
+// Re-read prices and stock from the DB at most once a minute.
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const [featured, categories, heroRow] = await Promise.all([getFeaturedProducts(), getCategories(), getProductBySlug("sony-wh-1000xm5")]);
+  const hero = heroRow?.product ?? featured[0];
 
   return (
     <div className="space-y-16">
       {/* Hero: text left, big product with price bubble right */}
-      <section className="relative overflow-hidden rounded-bento border border-line bg-gradient-to-br from-card via-card to-accent/20">
+      {hero && <section className="relative overflow-hidden rounded-bento border border-line bg-gradient-to-br from-card via-card to-accent/20">
         <div className="grid items-center gap-8 px-6 py-10 md:grid-cols-2 md:px-12 md:py-14">
           <div>
             <p className="inline-flex items-center gap-2 text-xs font-medium text-danger">
@@ -36,7 +41,7 @@ export default function HomePage() {
             <h1 className="mt-4 text-3xl font-bold leading-tight md:text-5xl">
               {hero.brand} <span className="whitespace-nowrap">{hero.name}</span>
             </h1>
-            <p className="mt-3 text-muted">Беспроводные наушники с шумоподавлением</p>
+            <p className="mt-3 text-muted">{heroRow?.product.shortDescription ?? "Лучшее предложение недели"}</p>
             <div className="mt-8 flex flex-wrap items-center gap-5">
               <LinkButton href={`/product/${hero.slug}`}>
                 <span aria-hidden>🛒</span> Купить
@@ -49,14 +54,14 @@ export default function HomePage() {
           </div>
           <div className="relative flex justify-center">
             <span aria-hidden className="absolute inset-x-10 inset-y-4 -rotate-6 rounded-bento bg-accent/15" />
-            <span aria-hidden className="relative text-[140px] leading-none md:text-[200px]">{hero.icon}</span>
+            {hero.images[0] && <Image src={hero.images[0]} alt="" width={240} height={240} priority className="relative size-44 md:size-60" />}
             <p className="absolute right-4 top-0 flex size-24 flex-col items-center justify-center rounded-full bg-text px-2 text-center text-bg shadow-lg md:right-10">
               <span className="text-[10px] text-bg/60">от</span>
               <span className="text-[11px] font-bold leading-tight">{formatUZS(hero.priceUzs)}</span>
             </p>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* Categories: square tiles, icon above name */}
       <section aria-labelledby="cats" className="space-y-6">
@@ -68,7 +73,7 @@ export default function HomePage() {
                 href={`/category/${c.slug}`}
                 className="flex aspect-square flex-col items-center justify-center gap-2 rounded-card border border-line bg-card p-3 text-center transition-colors hover:border-accent/50 hover:bg-surface sm:aspect-auto sm:py-6"
               >
-                <span aria-hidden className="text-3xl">{c.icon}</span>
+                {c.imageUrl && <Image src={c.imageUrl} alt="" width={48} height={48} className="size-12" />}
                 <span className="text-xs font-medium sm:text-sm">{c.name}</span>
               </Link>
             </li>
@@ -114,7 +119,7 @@ export default function HomePage() {
       <section aria-labelledby="popular" className="space-y-6">
         <SectionHead id="popular" eyebrow="Наши товары" title="Популярные товары" />
         <div className="grid grid-cols-2 gap-x-3 gap-y-6 md:grid-cols-3 lg:grid-cols-4">
-          {products.filter((p) => p.featured).map((p) => (
+          {featured.map((p) => (
             <ProductCard key={p.slug} product={p} />
           ))}
         </div>

@@ -1,15 +1,25 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { discountPercent, formatUZS } from "@/lib/format";
-import type { Product } from "@/lib/mock-data";
+import type { ProductListItem } from "@/lib/catalog";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product }: { product: ProductListItem }) {
   const discount = discountPercent(product.priceUzs, product.oldPriceUzs);
-  const inStock = product.stock > 0;
+  const inStock = product.stockQuantity > 0;
+  const image = product.images[0];
   return (
     <article className="group relative flex flex-col">
-      <div className="relative flex aspect-square items-center justify-center rounded-card bg-card text-7xl transition-colors group-hover:bg-surface" aria-hidden>
-        <span className="transition-transform duration-200 group-hover:scale-105">{product.icon}</span>
+      <div className="relative aspect-square overflow-hidden rounded-card bg-card transition-colors group-hover:bg-surface">
+        {image && (
+          <Image
+            src={image}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+            className="object-contain p-6 transition-transform duration-200 group-hover:scale-105"
+          />
+        )}
         {discount > 0 && (
           <span className="absolute right-2 top-2">
             <Badge tone="accent">−{discount}%</Badge>

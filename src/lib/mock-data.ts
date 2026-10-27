@@ -1,5 +1,5 @@
 // Source of truth for seed data (npm run db:seed).
-// shortcut: the home page still reads this file directly, switch it to Neon queries in stage 3 (T030)
+// The app reads from Neon; edit here and re-run the seed to change test products.
 
 export type Category = { slug: string; name: string; icon: string; description: string };
 
