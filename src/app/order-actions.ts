@@ -58,7 +58,7 @@ export async function stripeCheckoutAction(formData: FormData) {
     ({ url } = await stripe.checkout.sessions.create({
       mode: "payment",
       client_reference_id: order.orderNumber,
-      metadata: { orderNumber: order.orderNumber },
+      metadata: { orderNumber: order.orderNumber, userId }, // userId lets the webhook find the owner
       line_items: order.items.map((i) => ({
         quantity: i.quantity,
         price_data: { currency: "uzs", unit_amount: toStripeAmount(i.unitPriceUzs), product_data: { name: i.productNameSnapshot } },

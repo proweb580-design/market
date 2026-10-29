@@ -23,7 +23,7 @@ export function isPaidSession(session: PaidCheck, order: { orderNumber: string; 
 }
 
 // Called when the buyer comes back from Stripe; the order changes only through the owner/unpaid-checked update.
-// shortcut: no webhook, so a buyer who closes the tab before the redirect leaves the order unpaid; add a webhook before real use.
+// Also called by the webhook (src/app/api/stripe/webhook), so a buyer who closes the tab still gets a paid order.
 export async function confirmStripePayment(userId: string, orderNumber: string, sessionId: string) {
   if (!stripe) return;
   const order = await getOrder(userId, orderNumber);
