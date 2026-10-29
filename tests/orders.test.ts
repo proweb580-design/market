@@ -5,7 +5,7 @@ import { eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { cartItems, carts, orders, products, users } from "@/db/schema";
 import { addToCart, getCart } from "@/lib/cart";
-import { checkoutSchema, createOrder, getOrder, listOrders, mockPayment } from "@/lib/orders";
+import { checkoutSchema, createOrder, getOrder, listOrders, completeTestPayment } from "@/lib/orders";
 
 const input = checkoutSchema.parse({ customerName: "Тест", customerPhone: "90 123 45 67", deliveryMethod: "pickup" });
 const stamp = Date.now();
@@ -70,15 +70,15 @@ describe("orders", () => {
   });
 
   it("success sets paid_test once; a repeated call changes nothing", async () => {
-    expect(await mockPayment(owner, paid, "success")).toBe(true);
-    expect(await mockPayment(owner, paid, "failure")).toBe(false);
+    expect(await completeTestPayment(owner, paid, "success")).toBe(true);
+    expect(await completeTestPayment(owner, paid, "failure")).toBe(false);
     expect(await getOrder(owner, paid)).toMatchObject({ paymentStatus: "paid_test", status: "confirmed" });
     expect(await stockOf(macbook.id)).toBe(macbook.stock - 1); // the late "failure" did not restock
   });
 
   it("hides another user's order and refuses to pay it", async () => {
     expect(await getOrder(stranger, paid)).toBeNull();
-    expect(await mockPayment(stranger, paid, "success")).toBe(false);
+    expect(await completeTestPayment(stranger, paid, "success")).toBe(false);
   });
 
   it("failure is not marked paid and returns the stock", async () => {
@@ -87,7 +87,7 @@ describe("orders", () => {
     const result = await createOrder(owner, input);
     if (!("orderNumber" in result)) throw new Error(result.error);
     expect(await stockOf(cable.id)).toBe(before - 3);
-    expect(await mockPayment(owner, result.orderNumber, "failure")).toBe(true);
+    expect(await completeTestPayment(owner, result.orderNumber, "failure")).toBe(true);
     expect(await getOrder(owner, result.orderNumber)).toMatchObject({ paymentStatus: "failed", status: "cancelled" });
     expect(await stockOf(cable.id)).toBe(before);
     expect((await listOrders(owner)).map((o) => o.orderNumber)).toEqual([result.orderNumber, paid]);

@@ -86,9 +86,9 @@ export async function createOrder(userId: string, input: CheckoutInput): Promise
   });
 }
 
-// Simulation only: no card data, no money. Only the owner's unpaid order changes, exactly once;
+// Test payments only (simulation or Stripe test mode): no money. Only the owner's unpaid order changes, exactly once;
 // a repeated or concurrent call matches no row and returns false.
-export async function mockPayment(userId: string, orderNumber: string, outcome: "success" | "failure") {
+export async function completeTestPayment(userId: string, orderNumber: string, outcome: "success" | "failure") {
   return db.transaction(async (tx) => {
     const [order] = await tx
       .update(orders)

@@ -1,18 +1,20 @@
 import { notFound } from "next/navigation";
-import { mockPaymentAction } from "@/app/order-actions";
+import { mockPaymentAction, stripeCheckoutAction } from "@/app/order-actions";
 import { Badge } from "@/components/ui/Badge";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { formatUZS } from "@/lib/format";
 import { getOrder, paymentLabels } from "@/lib/orders";
 import { requireUser } from "@/lib/owner";
+import { confirmStripePayment, stripe } from "@/lib/stripe";
 
 export const metadata = { title: "Результат оплаты" };
 
-type Props = { searchParams: Promise<{ order?: string }> };
+type Props = { searchParams: Promise<{ order?: string; session_id?: string; stripe?: string }> };
 
 export default async function Page({ searchParams }: Props) {
-  const { order: orderNumber = "" } = await searchParams;
+  const { order: orderNumber = "", session_id: sessionId, stripe: stripeStatus } = await searchParams;
   const user = await requireUser(`/checkout/result?order=${encodeURIComponent(orderNumber)}`);
+  if (orderNumber && sessionId) await confirmStripePayment(user.id, orderNumber, sessionId);
   const order = orderNumber ? await getOrder(user.id, orderNumber) : null;
   if (!order) notFound();
   const payment = paymentLabels[order.paymentStatus as keyof typeof paymentLabels];
@@ -29,6 +31,17 @@ export default async function Page({ searchParams }: Props) {
 
       {order.paymentStatus === "unpaid" && (
         <section className="space-y-4 rounded-card border border-accent/40 bg-accent/5 p-5">
+          {stripe && (
+            <form action={stripeCheckoutAction} className="space-y-2 border-b border-line pb-4">
+              <input type="hidden" name="orderNumber" value={order.orderNumber} />
+              <Button type="submit" className="w-full">Оплатить картой через Stripe (тестовый режим)</Button>
+              <p className="text-xs text-muted">
+                Тестовая карта: 4242 4242 4242 4242, любой будущий срок, любой CVC. Отказ: 4000 0000 0000 0002. Реальные деньги не списываются.
+              </p>
+              {stripeStatus === "error" && <p role="alert" className="text-sm text-danger">Не удалось открыть оплату Stripe. Попробуйте ещё раз.</p>}
+              {sessionId && <p role="status" className="text-sm text-danger">Оплата в Stripe не завершена. Можно попробовать снова.</p>}
+            </form>
+          )}
           <p className="text-sm">
             Это <strong>симуляция оплаты</strong>: данные карты не нужны, деньги не списываются. Выберите результат, чтобы проверить сценарий.
           </p>
