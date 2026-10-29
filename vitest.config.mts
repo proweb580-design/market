@@ -12,5 +12,6 @@ export default defineConfig({
       "server-only": fileURLToPath(new URL("./tests/empty.ts", import.meta.url)),
     },
   },
-  test: { include: ["tests/**/*.test.ts"], testTimeout: 20_000 },
+  // Files share one Neon DB and change product stock, so run them one at a time.
+  test: { include: ["tests/**/*.test.ts"], testTimeout: 20_000, fileParallelism: false },
 });

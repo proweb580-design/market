@@ -38,7 +38,7 @@ export function summarizeCart(rows: CartRow[]) {
     lines,
     totalUzs: lines.reduce((s, l) => s + l.lineTotalUzs, 0),
     itemCount: lines.reduce((s, l) => s + l.quantity, 0),
-    // Checkout (stage 7) must call getCart again and refuse unless ok.
+    // createOrder re-checks stock under a row lock; this flag only drives the UI.
     ok: lines.length > 0 && lines.every((l) => !l.problem),
   };
 }
