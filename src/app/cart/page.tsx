@@ -32,7 +32,7 @@ export default async function Page() {
           {cart.lines.map((l) => (
             <li key={l.productId} className="flex gap-4 p-4">
               <div className="relative size-20 shrink-0 overflow-hidden rounded-card bg-surface sm:size-24">
-                {l.images[0] && <Image src={l.images[0]} alt="" fill sizes="96px" className="object-contain p-2" />}
+                {l.images[0] && <Image src={l.images[0]} alt="" fill sizes="96px" className={l.images[0].endsWith(".svg") ? "object-contain p-2" : "object-cover"} />}
               </div>
               <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
@@ -40,6 +40,9 @@ export default async function Page() {
                   <Link href={`/product/${l.slug}`} className="font-medium hover:text-accent">{l.name}</Link>
                   <p className="mt-1 text-sm text-muted">{formatUZS(l.priceUzs)} / шт.</p>
                   {l.problem && <p className="mt-1 text-sm text-danger">{l.problem}</p>}
+                  {!l.problem && l.quantity >= Math.min(l.stockQuantity, MAX_LINE_QUANTITY) && (
+                    <p className="mt-1 text-xs text-muted">Это максимум: {l.quantity} шт.</p>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 sm:flex-col sm:items-end">
                   <form action={updateCartQuantity} className="flex items-center gap-1" aria-label={`Количество: ${l.name}`}>

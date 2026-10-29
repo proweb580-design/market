@@ -46,7 +46,7 @@ export default async function Page() {
               {items.map((p) => (
                 <th key={p.id} scope="col" className="p-4 text-left align-top font-normal">
                   <div className="relative mb-3 aspect-square w-full max-w-40 overflow-hidden rounded-card bg-surface">
-                    {p.images[0] && <Image src={p.images[0]} alt="" fill sizes="160px" className="object-contain p-4" />}
+                    {p.images[0] && <Image src={p.images[0]} alt="" fill sizes="160px" className={p.images[0].endsWith(".svg") ? "object-contain p-4" : "object-cover"} />}
                   </div>
                   <Link href={`/product/${p.slug}`} className="font-medium hover:text-accent">{p.name}</Link>
                   <form action={toggleCompare} className="mt-2">

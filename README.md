@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TechStore
 
-## Getting Started
+Учебный интернет-магазин электроники для Ташкента: каталог с фильтрами, избранное, сравнение, корзина, вход (email или Google), оформление заказа и **тестовая** оплата. Цены в сумах (UZS).
 
-First, run the development server:
+Стек: Next.js 15 (App Router, Server Actions), Tailwind CSS 4, Drizzle ORM, Neon PostgreSQL, Auth.js, Stripe (только тестовый режим).
+
+## Запуск локально
+
+Нужны Node.js 20+ и бесплатная база на [Neon](https://neon.tech).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # заполните значения, см. комментарии в файле
+npm run db:migrate           # создать таблицы
+npm run db:seed              # категории и 16 товаров
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Проверки:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm test        # юнит-тесты (vitest)
+npm run lint
+npx tsc --noEmit
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Переменные окружения
 
-## Learn More
+| Переменная | Обязательна | Где взять |
+|---|---|---|
+| `DATABASE_URL` | да | Neon → Connect → pooled connection string |
+| `AUTH_SECRET` | да | `npx auth secret` |
+| `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET` | нет | Google Cloud Console → Credentials. Без них кнопки Google нет |
+| `STRIPE_SECRET_KEY` | нет | Stripe → Test mode → API keys, только `sk_test_…`. Без него — симуляция оплаты |
+| `STRIPE_WEBHOOK_SECRET` | нет | `stripe listen` локально или Stripe → Webhooks → Signing secret |
 
-To learn more about Next.js, take a look at the following resources:
+Секреты хранятся только в `.env.local` (он в `.gitignore`) и в настройках хостинга. В репозитории — лишь `.env.example` с заглушками.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Публикация на Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Импортируйте репозиторий в Vercel.
+2. **Settings → Environment Variables**: добавьте переменные из таблицы выше.
+3. В Google OAuth добавьте redirect URI `https://<домен>/api/auth/callback/google`.
+4. В Stripe (Test mode) создайте webhook `https://<домен>/api/stripe/webhook` с событиями `checkout.session.completed` и `checkout.session.async_payment_succeeded`, его Signing secret запишите в `STRIPE_WEBHOOK_SECRET`.
+5. Redeploy, чтобы подхватились переменные.
 
-## Deploy on Vercel
+Миграции Vercel не запускает: при изменении схемы выполните `npm run db:migrate` с production `DATABASE_URL`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Оплата: только тест
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Реальные деньги **не списываются**. Код принимает только ключи `sk_test_`; live-ключ игнорируется.
+- С ключом Stripe покупатель уходит на страницу Stripe Checkout. Тестовая карта `4242 4242 4242 4242`, любой будущий срок и CVC; отказ — `4000 0000 0000 0002`.
+- Без ключа Stripe на странице заказа кнопки «Симулировать успешную оплату / отказ».
+- Успешная оплата ставит заказу статус `paid_test`. Отказ при симуляции отменяет заказ и возвращает товар на склад.
+- Заказ подтверждается при возврате со Stripe и, если настроен webhook, даже когда покупатель закрыл вкладку.
+
+## Как устроено
+
+- Цены и остатки всегда берутся из базы на сервере; из браузера приходят только `productId` и количество.
+- Заказ создаётся в одной транзакции: блокировка товаров, проверка остатка, снимок цен, резерв склада, очистка корзины.
+- Заказы и оплата фильтруются по владельцу: чужой номер заказа — 404.
+- Гостевая корзина хранится в базе по cookie `guest_id`, избранное и сравнение гостя — в cookie; при входе они переносятся в аккаунт.
+
+## Ограничения
+
+- Доставка бесплатная и без реальной логистики, срок акции на главной — «до конца недели» на клиенте.
+- Нет админки: товары меняются через `src/lib/mock-data.ts` и `npm run db:seed`. **Seed перезаписывает цены и остатки** всех товаров.
+- Фото товаров — с Wikimedia Commons (CC BY / CC BY-SA / CC0), часто похожие модели; автор и лицензия подписаны на странице товара и перечислены в `src/lib/photo-credits.json`. У Xiaomi TV A фото нет.
+- Отказ и истечение сессии Stripe не отменяют заказ: его можно оплатить повторно.
+
+Документы проекта: `PRD.md` (требования), `SPEC.md` (спецификация и приёмочные тесты), `Tasks.md` (задачи по этапам), `DECISIONS.md` (принятые решения).

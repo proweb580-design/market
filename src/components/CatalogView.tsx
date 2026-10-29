@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ProductCard } from "@/components/ProductCard";
 import { Button, LinkButton } from "@/components/ui/Button";
@@ -121,6 +122,8 @@ export async function CatalogView({ basePath, params, fixedCategory }: { basePat
     getBrands(category),
     fixedCategory ? undefined : getCategories(),
   ]);
+  // A stale or hand-typed ?page= past the end goes to the last real page instead of an empty one.
+  if (params.page > pageCount) redirect(buildHref(basePath, params, { page: pageCount }));
   const formProps = { basePath, params, brands, categories };
   const activeFilters = [params.q, params.brand?.length, params.min, params.max, params.stock, params.category].filter(Boolean).length;
 
