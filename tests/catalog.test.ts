@@ -15,6 +15,19 @@ describe("parseCatalogParams", () => {
     });
   });
 
+  it("treats empty price fields from the filter form as no limit", () => {
+    const p = parseCatalogParams({ q: "", brand: ["ASUS", "Apple"], min: "", max: "", sort: "recommended" });
+    expect(p.min).toBeUndefined();
+    expect(p.max).toBeUndefined();
+    expect(parseCatalogParams({ max: "0" }).max).toBe(0);
+  });
+
+  it("finds several brands submitted with empty price fields", async () => {
+    const { items } = await query({ brand: ["ASUS", "Anker", "Apple", "JBL"], min: "", max: "" });
+    expect(items.length).toBeGreaterThan(0);
+    expect(new Set(items.map((i) => i.brand))).toEqual(new Set(["ASUS", "Anker", "Apple", "JBL"]));
+  });
+
   it("normalizes a single brand to an array", () => {
     expect(parseCatalogParams({ brand: "Apple" }).brand).toEqual(["Apple"]);
   });

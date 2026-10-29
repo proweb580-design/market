@@ -16,7 +16,11 @@ export const SORTS = {
 } as const;
 export type Sort = keyof typeof SORTS;
 
-const optionalPrice = z.coerce.number().int().min(0).max(1_000_000_000).optional().catch(undefined);
+// An empty form field ("min=") means "no limit"; without this, Number("") === 0 turns it into "up to 0 сум".
+const optionalPrice = z.preprocess(
+  (v) => (v === "" ? undefined : v),
+  z.coerce.number().int().min(0).max(1_000_000_000).optional().catch(undefined),
+);
 
 // URL params are untrusted: invalid values fall back to defaults instead of erroring.
 const paramsSchema = z.object({
