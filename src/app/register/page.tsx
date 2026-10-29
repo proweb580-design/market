@@ -1,7 +1,8 @@
-import { ComingSoon } from "@/components/ComingSoon";
+import { RegisterForm } from "@/components/AuthForms";
+import { authPageProps, type AuthSearchParams } from "@/lib/auth-page";
 
 export const metadata = { title: "Регистрация" };
 
-export default function Page() {
-  return <ComingSoon title="Регистрация" stage={6} />;
+export default async function Page({ searchParams }: { searchParams: AuthSearchParams }) {
+  return <RegisterForm {...await authPageProps(searchParams)} />;
 }

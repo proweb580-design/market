@@ -21,7 +21,7 @@ const timestamps = {
     .$onUpdate(() => new Date()),
 };
 
-// Text id to match the Auth.js Drizzle adapter (stage 6 adds accounts/sessions tables).
+// Text id to match the Auth.js Drizzle adapter. Sessions are JWT, so no sessions table.
 export const users = pgTable("users", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
@@ -31,6 +31,27 @@ export const users = pgTable("users", {
   passwordHash: text("password_hash"),
   ...timestamps,
 });
+
+// Auth.js adapter shape: property names are fixed by @auth/drizzle-adapter.
+export const accounts = pgTable(
+  "accounts",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type").$type<"oauth" | "oidc" | "email" | "webauthn">().notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
+  },
+  (t) => [primaryKey({ columns: [t.provider, t.providerAccountId] }), index("accounts_user_idx").on(t.userId)],
+);
 
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),

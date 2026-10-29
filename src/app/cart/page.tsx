@@ -1,15 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { removeCartItem, updateCartQuantity } from "@/app/actions";
 import { Button, buttonClass, LinkButton } from "@/components/ui/Button";
 import { getCart, MAX_LINE_QUANTITY } from "@/lib/cart";
 import { formatUZS } from "@/lib/format";
+import { cartOwner } from "@/lib/owner";
 
 export const metadata = { title: "Корзина" };
 
 export default async function Page() {
-  const cart = await getCart((await cookies()).get("guest_id")?.value);
+  const cart = await getCart(await cartOwner(false));
 
   if (cart.lines.length === 0) {
     return (

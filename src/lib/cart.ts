@@ -1,9 +1,14 @@
 import "server-only";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { cartItems, carts, products } from "@/db/schema";
 
 export const MAX_LINE_QUANTITY = 99;
+
+// A cart belongs to a signed-in user or to an anonymous guest_id cookie.
+export type CartOwner = { userId: string } | { guestId: string };
+
+const ownedBy = (owner: CartOwner) => ("userId" in owner ? eq(carts.userId, owner.userId) : eq(carts.guestId, owner.guestId));
 
 type CartRow = {
   productId: number;
@@ -40,8 +45,8 @@ export function summarizeCart(rows: CartRow[]) {
 
 export type Cart = ReturnType<typeof summarizeCart>;
 
-export async function getCart(guestId: string | undefined): Promise<Cart> {
-  if (!guestId) return summarizeCart([]);
+export async function getCart(owner: CartOwner | undefined): Promise<Cart> {
+  if (!owner) return summarizeCart([]);
   const rows = await db
     .select({
       productId: products.id,
@@ -57,34 +62,34 @@ export async function getCart(guestId: string | undefined): Promise<Cart> {
     .from(cartItems)
     .innerJoin(carts, eq(cartItems.cartId, carts.id))
     .innerJoin(products, eq(cartItems.productId, products.id))
-    .where(eq(carts.guestId, guestId))
+    .where(ownedBy(owner))
     .orderBy(asc(products.name));
   return summarizeCart(rows);
 }
 
-async function ensureCartId(guestId: string) {
-  const [cart] = await db
+async function ensureCartId(owner: CartOwner, tx: Pick<typeof db, "insert"> = db) {
+  const [cart] = await tx
     .insert(carts)
-    .values({ guestId })
-    .onConflictDoUpdate({ target: carts.guestId, set: { updatedAt: new Date() } })
+    .values(owner)
+    .onConflictDoUpdate({ target: "userId" in owner ? carts.userId : carts.guestId, set: { updatedAt: new Date() } })
     .returning({ id: carts.id });
   return cart.id;
 }
 
-async function findCartId(guestId: string) {
-  const [cart] = await db.select({ id: carts.id }).from(carts).where(eq(carts.guestId, guestId));
+async function findCartId(owner: CartOwner) {
+  const [cart] = await db.select({ id: carts.id }).from(carts).where(ownedBy(owner));
   return cart?.id;
 }
 
 const getProductStock = async (productId: number) =>
   (await db.select({ stock: products.stockQuantity, isActive: products.isActive }).from(products).where(eq(products.id, productId)))[0];
 
-export async function addToCart(guestId: string, productId: number, quantity: number): Promise<{ error: string } | { ok: true }> {
+export async function addToCart(owner: CartOwner, productId: number, quantity: number): Promise<{ error: string } | { ok: true }> {
   const product = await getProductStock(productId);
   if (!product?.isActive) return { error: "Товар не найден" };
   if (product.stock === 0) return { error: "Нет в наличии" };
 
-  const cartId = await ensureCartId(guestId);
+  const cartId = await ensureCartId(owner);
   const [existing] = await db
     .select({ quantity: cartItems.quantity })
     .from(cartItems)
@@ -105,14 +110,35 @@ export async function addToCart(guestId: string, productId: number, quantity: nu
 }
 
 // Clamps to 1..stock so the cart can never be set above what is available.
-export async function setCartQuantity(guestId: string, productId: number, quantity: number) {
-  const [cartId, product] = await Promise.all([findCartId(guestId), getProductStock(productId)]);
+export async function setCartQuantity(owner: CartOwner, productId: number, quantity: number) {
+  const [cartId, product] = await Promise.all([findCartId(owner), getProductStock(productId)]);
   if (!cartId || !product) return;
   const next = Math.max(1, Math.min(quantity, product.stock, MAX_LINE_QUANTITY));
   await db.update(cartItems).set({ quantity: next }).where(and(eq(cartItems.cartId, cartId), eq(cartItems.productId, productId)));
 }
 
-export async function removeFromCart(guestId: string, productId: number) {
-  const cartId = await findCartId(guestId);
+export async function removeFromCart(owner: CartOwner, productId: number) {
+  const cartId = await findCartId(owner);
   if (cartId) await db.delete(cartItems).where(and(eq(cartItems.cartId, cartId), eq(cartItems.productId, productId)));
+}
+
+// After sign-in: moves the guest cart into the user's cart, summing quantities, then drops the guest cart.
+// Lines above stock are kept and flagged by summarizeCart, so nothing is silently lost.
+export async function mergeGuestCart(guestId: string, userId: string) {
+  await db.transaction(async (tx) => {
+    const [guest] = await tx.select({ id: carts.id }).from(carts).where(eq(carts.guestId, guestId));
+    if (!guest) return;
+    const userCartId = await ensureCartId({ userId }, tx);
+    const items = await tx.select().from(cartItems).where(eq(cartItems.cartId, guest.id));
+    if (items.length) {
+      await tx
+        .insert(cartItems)
+        .values(items.map((i) => ({ cartId: userCartId, productId: i.productId, quantity: i.quantity })))
+        .onConflictDoUpdate({
+          target: [cartItems.cartId, cartItems.productId],
+          set: { quantity: sql`least(${cartItems.quantity} + excluded.quantity, ${MAX_LINE_QUANTITY})` },
+        });
+    }
+    await tx.delete(carts).where(eq(carts.id, guest.id)); // items cascade
+  });
 }

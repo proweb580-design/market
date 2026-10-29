@@ -1,17 +1,15 @@
-import { cookies } from "next/headers";
 import { toggleFavorite } from "@/app/actions";
 import { AddToCart } from "@/components/AddToCart";
 import { ProductCard } from "@/components/ProductCard";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { getProductsByIds } from "@/lib/catalog";
-import { FAVORITES_MAX, parseIds } from "@/lib/id-list";
+import { getFavoriteIds } from "@/lib/owner";
 
 export const metadata = { title: "Избранное" };
 
-// shortcut: guest favorites live in a cookie; account favorites in Neon arrive with auth (stage 6).
+// Guest favorites live in a cookie, account favorites in Neon (merged on sign-in).
 export default async function Page() {
-  const ids = parseIds((await cookies()).get("favorites")?.value, FAVORITES_MAX);
-  const items = await getProductsByIds(ids);
+  const items = await getProductsByIds(await getFavoriteIds());
 
   return (
     <div className="space-y-6">

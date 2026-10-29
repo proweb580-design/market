@@ -1,7 +1,9 @@
 import { ComingSoon } from "@/components/ComingSoon";
+import { requireUser } from "@/lib/owner";
 
 export const metadata = { title: "Оформление заказа" };
 
-export default function Page() {
+export default async function Page() {
+  await requireUser("/checkout");
   return <ComingSoon title="Оформление заказа" stage={7} />;
 }

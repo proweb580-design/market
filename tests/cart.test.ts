@@ -6,7 +6,7 @@ import { carts } from "@/db/schema";
 import { addToCart, getCart, removeFromCart, setCartQuantity, summarizeCart } from "@/lib/cart";
 import { getProductBySlug } from "@/lib/catalog";
 
-const guest = crypto.randomUUID();
+const guest = { guestId: crypto.randomUUID() };
 let macbook: number; // stock 3, 15 900 000
 let cable: number; // stock 100, 120 000
 let soldOut: number; // stock 0
@@ -18,7 +18,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await db.delete(carts).where(eq(carts.guestId, guest));
+  await db.delete(carts).where(eq(carts.guestId, guest.guestId));
   await db.$client.end();
 });
 
