@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import photoCredits from "@/lib/photo-credits.json";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { toggleCompare, toggleFavorite } from "@/app/actions";
@@ -38,6 +39,7 @@ export default async function ProductPage({ params }: Props) {
   const inStock = product.stockQuantity > 0;
   const specs = Object.entries(product.specifications);
   const [mainImage, ...moreImages] = product.images;
+  const credit = Object.values(photoCredits).find((c) => c.src === mainImage);
 
   return (
     <div className="space-y-12">
@@ -55,7 +57,7 @@ export default async function ProductPage({ params }: Props) {
         <div className="space-y-3">
           <div className="relative aspect-square overflow-hidden rounded-bento border border-line bg-card">
             {mainImage && (
-              <Image src={mainImage} alt={product.name} fill priority sizes="(min-width: 768px) 50vw, 100vw" className="object-contain p-10" />
+              <Image src={mainImage} alt={product.name} fill priority sizes="(min-width: 768px) 50vw, 100vw" className={mainImage.endsWith(".svg") ? "object-contain p-10" : "object-cover"} />
             )}
             {discount > 0 && (
               <span className="absolute right-4 top-4">
@@ -63,6 +65,12 @@ export default async function ProductPage({ params }: Props) {
               </span>
             )}
           </div>
+          {credit && (
+            // CC licenses require attribution next to the photo.
+            <p className="text-xs text-muted">
+              Фото: {credit.author}, <a href={credit.source} target="_blank" rel="noopener noreferrer" className="underline hover:text-text">{credit.license}</a>, Wikimedia Commons
+            </p>
+          )}
           {moreImages.length > 0 && (
             <ul className="grid grid-cols-4 gap-3">
               {moreImages.map((src, i) => (

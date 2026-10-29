@@ -1,0 +1,92 @@
+{
+  "iphone-15-128": {
+    "src": "/images/products/iphone-15-128.jpg",
+    "author": "ThePhotoGraphIc",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Back_of_iPhone_15.jpg"
+  },
+  "galaxy-s24-256": {
+    "src": "/images/products/galaxy-s24-256.png",
+    "author": "webtekno",
+    "license": "CC BY 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Samsung_Galaxy_S24_(webtekno)_008.png"
+  },
+  "xiaomi-14t": {
+    "src": "/images/products/xiaomi-14t.jpg",
+    "author": "RuinDig/Yuki Uchida",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Xiaomi-14T-Pro---RuinDig_099.jpg"
+  },
+  "redmi-note-13-128": {
+    "src": "/images/products/redmi-note-13-128.jpg",
+    "author": "茅野ふたば",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Redmi_Note_14_Pro_(1).jpg"
+  },
+  "macbook-air-m3": {
+    "src": "/images/products/macbook-air-m3.jpg",
+    "author": "KKPCW（Kyu3）",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:M2_Macbook_Air_Starlight_model.jpg"
+  },
+  "asus-vivobook-15": {
+    "src": "/images/products/asus-vivobook-15.jpg",
+    "author": "LeopardWin",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Asus_Vivobook_15.jpg"
+  },
+  "lenovo-legion-5": {
+    "src": "/images/products/lenovo-legion-5.jpg",
+    "author": "HuangWending18072009",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Lenovo_Legion_Y7000P_Eclipse_Gray_Laptop.jpg"
+  },
+  "sony-wh-1000xm5": {
+    "src": "/images/products/sony-wh-1000xm5.jpg",
+    "author": "www.digitalpush.net",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Sony-WH-1000XM3-kabellose-Bluetooth-Noise-Cancelling-Kopfhoerer.jpg"
+  },
+  "airpods-pro-2": {
+    "src": "/images/products/airpods-pro-2.jpg",
+    "author": "aconcagua",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:AirPods_Pro_2.jpg"
+  },
+  "jbl-tune-520bt": {
+    "src": "/images/products/jbl-tune-520bt.jpg",
+    "author": "Oxiq",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:JBL_Synchros_E50BT.jpg"
+  },
+  "lg-oled-c3-55": {
+    "src": "/images/products/lg-oled-c3-55.jpg",
+    "author": "LG Electronics",
+    "license": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:LG_OLED_TV.jpg"
+  },
+  "samsung-qled-q60d-50": {
+    "src": "/images/products/samsung-qled-q60d-50.jpg",
+    "author": "Bretwa",
+    "license": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Samsung_QLED_TV_8K_-_75_inches_-_2018-11-02.jpg"
+  },
+  "anker-737-charger": {
+    "src": "/images/products/anker-737-charger.jpg",
+    "author": "www.digitalpush.net",
+    "license": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Anker-PowerPort-40W-5-Port-USB-Ladegeraet.jpg"
+  },
+  "baseus-usb-c-cable-2m": {
+    "src": "/images/products/baseus-usb-c-cable-2m.jpg",
+    "author": "Fructibus",
+    "license": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:USB-C_cable_2017_A.jpg"
+  },
+  "xiaomi-power-bank-20000": {
+    "src": "/images/products/xiaomi-power-bank-20000.jpg",
+    "author": "nijanthan_v",
+    "license": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Xiaomi_PowerBank.jpg"
+  }
+}

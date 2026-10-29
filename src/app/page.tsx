@@ -54,7 +54,7 @@ export default async function HomePage() {
           </div>
           <div className="relative flex justify-center">
             <span aria-hidden className="absolute inset-x-10 inset-y-4 -rotate-6 rounded-bento bg-danger/10" />
-            {hero.images[0] && <Image src={hero.images[0]} alt="" width={240} height={240} priority className="relative size-44 md:size-60" />}
+            {hero.images[0] && <Image src={hero.images[0]} alt="" width={240} height={240} priority className="relative size-44 rounded-card object-cover shadow-lg md:size-60" />}
             <p className="absolute right-4 top-0 flex size-24 flex-col items-center justify-center rounded-full bg-card px-2 text-center shadow-lg md:right-10">
               <span className="text-[10px] text-muted">от</span>
               <span className="text-[11px] font-bold leading-tight text-accent">{formatUZS(hero.priceUzs)}</span>

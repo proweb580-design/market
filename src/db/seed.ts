@@ -3,6 +3,7 @@ import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { categories as categoryData, products as productData } from "../lib/mock-data";
+import photoCredits from "../lib/photo-credits.json";
 import { categories, products } from "./schema";
 
 process.loadEnvFile(".env.local");
@@ -50,8 +51,8 @@ async function main() {
           priceUzs: p.priceUzs,
           oldPriceUzs: p.oldPriceUzs ?? null,
           stockQuantity: p.stock,
-          // shortcut: category placeholder image, replace with real product photos before launch
-          images: [`/images/categories/${p.categorySlug}.svg`],
+          // Wikimedia Commons photo when one was found, otherwise the category placeholder.
+          images: [photoCredits[p.slug as keyof typeof photoCredits]?.src ?? `/images/categories/${p.categorySlug}.svg`],
           specifications: p.specs,
           isFeatured: p.featured ?? false,
         };

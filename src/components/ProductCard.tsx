@@ -16,7 +16,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
             alt=""
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-            className="object-contain p-6 transition-transform duration-200 group-hover:scale-105"
+            className={`${image.endsWith(".svg") ? "object-contain p-6" : "object-cover"} transition-transform duration-200 group-hover:scale-105`}
           />
         )}
         {discount > 0 && (
