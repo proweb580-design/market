@@ -42,6 +42,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ...(googleEnabled ? [Google] : []),
   ],
   callbacks: {
+    // A valid token for a user deleted from the DB ends the session (null clears the cookie).
+    async jwt({ token, user }) {
+      if (user || !token.sub) return token;
+      const [exists] = await db.select({ id: users.id }).from(users).where(eq(users.id, token.sub));
+      return exists ? token : null;
+    },
     session({ session, token }) {
       if (token.sub) session.user.id = token.sub;
       return session;
