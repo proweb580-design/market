@@ -6,6 +6,7 @@ import { Button, LinkButton } from "@/components/ui/Button";
 import { getProductsByIds } from "@/lib/catalog";
 import { formatUZS } from "@/lib/format";
 import { COMPARE_MAX, parseIds } from "@/lib/id-list";
+import { Icon } from "@/components/ui/Icon";
 
 export const metadata = { title: "Сравнение" };
 
@@ -52,7 +53,7 @@ export default async function Page() {
                   <form action={toggleCompare} className="mt-2">
                     <input type="hidden" name="productId" value={p.id} />
                     <Button type="submit" variant="ghost" className="h-9 px-2" aria-label={`Убрать ${p.name} из сравнения`}>
-                      ✕ Убрать
+                      <Icon name="close" className="size-4" /> Убрать
                     </Button>
                   </form>
                 </th>

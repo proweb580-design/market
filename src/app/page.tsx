@@ -5,6 +5,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { Countdown } from "@/components/Countdown";
 import { formatUZS } from "@/lib/format";
 import { getCategories, getFeaturedProducts, getProductBySlug } from "@/lib/catalog";
+import { Icon } from "@/components/ui/Icon";
 
 function SectionHead({ id, eyebrow, title, action }: { id: string; eyebrow: string; title: string; action?: React.ReactNode }) {
   return (
@@ -35,7 +36,7 @@ export default async function HomePage() {
         <div className="grid items-center gap-8 px-6 py-10 md:grid-cols-2 md:px-12 md:py-14">
           <div>
             <p className="inline-flex items-center gap-2 text-xs font-medium text-danger">
-              <span aria-hidden className="flex size-5 items-center justify-center rounded-full bg-danger/15">🔥</span>
+              <span aria-hidden className="flex size-6 items-center justify-center rounded-full bg-danger/10"><Icon name="flame" className="size-3.5" /></span>
               Горячее предложение недели
             </p>
             <h1 className="mt-4 text-3xl font-bold leading-tight md:text-5xl">
@@ -44,7 +45,7 @@ export default async function HomePage() {
             <p className="mt-3 text-muted">{heroRow?.product.shortDescription ?? "Лучшее предложение недели"}</p>
             <div className="mt-8 flex flex-wrap items-center gap-5">
               <LinkButton href={`/product/${hero.slug}`} variant="light" className="px-6">
-                <span aria-hidden>🛒</span> Купить
+                <Icon name="cart" className="size-4" /> Купить
               </LinkButton>
               <div className="text-xs text-muted">
                 <span className="text-sm text-amber-500" aria-label="Рейтинг 4 из 5">★★★★☆</span>
@@ -73,7 +74,11 @@ export default async function HomePage() {
                 href={`/category/${c.slug}`}
                 className="flex aspect-square flex-col items-center justify-center gap-2 rounded-card border border-line bg-card p-3 text-center shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-shadow hover:border-accent/40 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] sm:aspect-auto sm:py-6"
               >
-                {c.imageUrl && <Image src={c.imageUrl} alt="" width={48} height={48} className="size-12" />}
+                {c.imageUrl && (
+                  <span className="flex size-14 items-center justify-center rounded-full bg-accent/10">
+                    <Image src={c.imageUrl} alt="" width={28} height={28} className="size-7" />
+                  </span>
+                )}
                 <span className="text-xs font-medium sm:text-sm">{c.name}</span>
               </Link>
             </li>
@@ -95,7 +100,9 @@ export default async function HomePage() {
             </div>
             <LinkButton href="/category/headphones" className="mt-8">Смотреть</LinkButton>
           </div>
-          <span aria-hidden className="hidden text-[150px] leading-none sm:block">🎧</span>
+          <span aria-hidden className="hidden size-44 items-center justify-center rounded-full bg-card shadow-[0_8px_30px_rgba(0,0,0,0.06)] sm:flex">
+            <Image src="/images/categories/headphones.svg" alt="" width={88} height={88} className="size-22" />
+          </span>
         </div>
         <div className="grid gap-3">
           <Link href="/category/laptops" className="flex items-center justify-between rounded-bento border border-line bg-gradient-to-br from-accent/25 to-card p-6 hover:border-accent/40">
@@ -103,14 +110,18 @@ export default async function HomePage() {
               <h3 className="text-lg font-semibold">Ноутбуки</h3>
               <p className="text-sm text-muted">Скидки до 15%</p>
             </div>
-            <span aria-hidden className="text-5xl">💻</span>
+            <span aria-hidden className="flex size-14 items-center justify-center rounded-full bg-card">
+              <Image src="/images/categories/laptops.svg" alt="" width={28} height={28} className="size-7" />
+            </span>
           </Link>
           <Link href="/category/tv" className="flex items-center justify-between rounded-bento border border-line bg-gradient-to-br from-accent-2/20 to-card p-6 hover:border-accent/40">
             <div>
               <h3 className="text-lg font-semibold">OLED-телевизоры</h3>
               <p className="text-sm text-muted">Глубокий чёрный</p>
             </div>
-            <span aria-hidden className="text-5xl">📺</span>
+            <span aria-hidden className="flex size-14 items-center justify-center rounded-full bg-card">
+              <Image src="/images/categories/tv.svg" alt="" width={28} height={28} className="size-7" />
+            </span>
           </Link>
         </div>
       </section>

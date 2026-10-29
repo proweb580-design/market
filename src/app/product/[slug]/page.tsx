@@ -13,6 +13,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { Badge } from "@/components/ui/Badge";
 import { getProductBySlug, getSimilarProducts } from "@/lib/catalog";
 import { discountPercent, formatUZS } from "@/lib/format";
+import { Icon } from "@/components/ui/Icon";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -105,13 +106,15 @@ export default async function ProductPage({ params }: Props) {
               <form action={toggleFavorite}>
                 <input type="hidden" name="productId" value={product.id} />
                 <Button type="submit" variant="secondary" aria-pressed={isFavorite}>
-                  {isFavorite ? "♥ В избранном" : "♡ В избранное"}
+                  <Icon name="heart" className={`size-4 ${isFavorite ? "text-danger" : ""}`} filled={isFavorite} />
+                  {isFavorite ? "В избранном" : "В избранное"}
                 </Button>
               </form>
               <form action={toggleCompare}>
                 <input type="hidden" name="productId" value={product.id} />
                 <Button type="submit" variant="secondary" aria-pressed={inCompare} disabled={compareFull}>
-                  {inCompare ? "⇄ В сравнении" : compareFull ? `Сравнение заполнено (${COMPARE_MAX})` : "⇄ Сравнить"}
+                  <Icon name="compare" className="size-4" />
+                  {inCompare ? "В сравнении" : compareFull ? `Сравнение заполнено (${COMPARE_MAX})` : "Сравнить"}
                 </Button>
               </form>
             </div>

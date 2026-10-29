@@ -1,12 +1,13 @@
 import Link from "next/link";
+import { Icon } from "@/components/ui/Icon";
 
 const nav = [
-  { href: "/catalog", label: "Каталог", icon: "▦" },
-  { href: "/favorites", label: "Избранное", icon: "♡" },
-  { href: "/compare", label: "Сравнение", icon: "⇄" },
-  { href: "/cart", label: "Корзина", icon: "🛒" },
-  { href: "/account", label: "Аккаунт", icon: "👤" },
-];
+  { href: "/catalog", label: "Каталог", icon: "grid" },
+  { href: "/favorites", label: "Избранное", icon: "heart" },
+  { href: "/compare", label: "Сравнение", icon: "compare" },
+  { href: "/cart", label: "Корзина", icon: "cart" },
+  { href: "/account", label: "Аккаунт", icon: "user" },
+] as const;
 
 function SearchForm({ id, className }: { id: string; className: string }) {
   return (
@@ -40,7 +41,7 @@ export function Header() {
             {nav.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="flex flex-col items-center rounded-btn px-3 py-1.5 text-xs text-muted transition-colors hover:bg-surface hover:text-text">
-                  <span aria-hidden className="text-base leading-5">{item.icon}</span>
+                  <Icon name={item.icon} className="size-5" />
                   {item.label}
                 </Link>
               </li>
@@ -51,19 +52,19 @@ export function Header() {
         {/* Mobile menu: <details> works without JS and is keyboard-accessible */}
         <div className="ml-auto flex items-center gap-1 lg:hidden">
           <Link href="/cart" className="rounded-btn p-2.5 hover:bg-surface" aria-label="Корзина">
-            <span aria-hidden>🛒</span>
+            <Icon name="cart" />
           </Link>
           <details className="group relative">
             <summary className="flex cursor-pointer list-none items-center rounded-btn p-2.5 hover:bg-surface [&::-webkit-details-marker]:hidden" aria-label="Меню">
-              <span aria-hidden className="text-lg group-open:hidden">☰</span>
-              <span aria-hidden className="hidden text-lg group-open:inline">✕</span>
+              <Icon name="menu" className="size-5 group-open:hidden" />
+              <Icon name="close" className="hidden size-5 group-open:block" />
             </summary>
             <nav aria-label="Мобильная навигация" className="absolute right-0 top-full mt-2 w-56 rounded-card border border-line bg-card p-2 shadow-xl">
               <ul>
                 {nav.map((item) => (
                   <li key={item.href}>
                     <Link href={item.href} className="flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm hover:bg-surface">
-                      <span aria-hidden className="w-5 text-center">{item.icon}</span>
+                      <Icon name={item.icon} className="size-5 text-muted" />
                       {item.label}
                     </Link>
                   </li>
