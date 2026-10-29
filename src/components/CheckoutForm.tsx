@@ -36,8 +36,8 @@ export function CheckoutForm({ defaultName }: { defaultName: string }) {
       )}
       <Input label="Комментарий (необязательно)" name="comment" maxLength={500} defaultValue={v?.comment} error={e.comment} />
 
-      <Button type="submit" loading={pending} className="w-full">Перейти к тестовой оплате</Button>
-      <p className="text-xs text-muted">Оплата — симуляция: данные карты не запрашиваются, деньги не списываются.</p>
+      <Button type="submit" loading={pending} className="w-full">Оформить заказ</Button>
+      <p className="text-xs text-muted">Оплата картой на следующем шаге. Сайт работает в тестовом режиме — деньги не списываются.</p>
     </form>
   );
 }

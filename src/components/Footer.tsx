@@ -35,7 +35,7 @@ export async function Footer() {
         <div>
           <h2 className="text-sm font-semibold">Контакты</h2>
           <p className="mt-3 text-sm text-muted">Ташкент, Узбекистан</p>
-          <p className="mt-2 text-xs text-muted">Оплата на сайте — тестовая симуляция, деньги не списываются.</p>
+          <p className="mt-2 text-xs text-muted">Оплата на сайте — тестовый режим, деньги не списываются.</p>
         </div>
       </div>
       <p className="container-page border-t border-line py-4 text-xs text-muted">© {new Date().getFullYear()} TechStore</p>

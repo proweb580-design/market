@@ -1,12 +1,13 @@
 import Link from "next/link";
 import type { ComponentProps } from "react";
 
-type Variant = "primary" | "secondary" | "ghost";
+type Variant = "primary" | "secondary" | "ghost" | "light";
 
 const variants: Record<Variant, string> = {
   primary: "bg-accent text-white hover:bg-accent/85",
-  secondary: "bg-surface text-text border border-line hover:border-white/20",
+  secondary: "bg-surface text-text border border-line hover:border-accent/40",
   ghost: "text-muted hover:text-text hover:bg-surface",
+  light: "bg-white text-black border border-line shadow-sm hover:shadow-md",
 };
 
 export function buttonClass(variant: Variant = "primary", extra = "") {

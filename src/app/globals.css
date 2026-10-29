@@ -1,17 +1,18 @@
 @import "tailwindcss";
 
-/* Design tokens from SPEC.md §3 */
+/* Design tokens: light storefront palette (white, soft peach hero, blue accent) */
 @theme {
-  --color-bg: #0b0d12;
-  --color-card: #141821;
-  --color-surface: #1b2130;
-  --color-text: #f5f7fb;
-  --color-muted: #9aa4b2;
-  --color-accent: #6d7cff;
-  --color-accent-2: #31c7bc;
-  --color-success: #36b37e;
-  --color-danger: #ff647c;
-  --color-line: rgba(255, 255, 255, 0.09);
+  --color-bg: #ffffff;
+  --color-card: #ffffff;
+  --color-surface: #f6f7fb;
+  --color-hero: #fbf3f0;
+  --color-text: #292930;
+  --color-muted: #6b6b75;
+  --color-accent: #2b6be6;
+  --color-accent-2: #8c71db;
+  --color-success: #1f9d55;
+  --color-danger: #e0315f;
+  --color-line: rgba(0, 0, 0, 0.08);
 
   --radius-btn: 12px;
   --radius-card: 16px;
@@ -21,7 +22,7 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   scroll-padding-top: 8rem; /* keep anchor targets below the sticky header */
 }
 

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
 import { discountPercent, formatUZS } from "@/lib/format";
 import type { ProductListItem } from "@/lib/catalog";
 
@@ -10,7 +9,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
   const image = product.images[0];
   return (
     <article className="group relative flex flex-col">
-      <div className="relative aspect-square overflow-hidden rounded-card bg-card transition-colors group-hover:bg-surface">
+      <div className="relative aspect-square overflow-hidden rounded-card bg-surface transition-shadow group-hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
         {image && (
           <Image
             src={image}
@@ -22,7 +21,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
         )}
         {discount > 0 && (
           <span className="absolute right-2 top-2">
-            <Badge tone="accent">−{discount}%</Badge>
+            <span className="rounded-md bg-accent px-2 py-1 text-xs font-semibold text-white">−{discount}%</span>
           </span>
         )}
       </div>

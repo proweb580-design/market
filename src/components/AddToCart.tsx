@@ -24,7 +24,7 @@ export function AddToCart({ productId, stock, withQuantity = true }: { productId
               max={max}
               defaultValue={1}
               inputMode="numeric"
-              className="h-11 w-20 rounded-btn border border-line bg-surface px-3 text-sm hover:border-white/20"
+              className="h-11 w-20 rounded-btn border border-line bg-surface px-3 text-sm hover:border-accent/40"
             />
           </>
         )}

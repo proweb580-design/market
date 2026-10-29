@@ -20,7 +20,7 @@ function buildHref(basePath: string, params: CatalogParams, overrides: Partial<C
   return s ? `${basePath}?${s}` : basePath;
 }
 
-const fieldClass = "h-10 w-full rounded-btn border border-line bg-surface px-3 text-sm hover:border-white/20";
+const fieldClass = "h-10 w-full rounded-btn border border-line bg-surface px-3 text-sm hover:border-accent/40";
 
 // Plain GET form: works without JS, and the URL is the single source of filter state.
 function FilterForm({ idPrefix, basePath, params, brands, categories }: {
@@ -103,7 +103,7 @@ function Pagination({ basePath, params, pageCount }: { basePath: string; params:
         p === params.page ? (
           <span key={p} aria-current="page" className="flex size-10 items-center justify-center rounded-btn bg-accent text-sm font-medium text-white">{p}</span>
         ) : (
-          <Link key={p} href={buildHref(basePath, params, { page: p })} className="flex size-10 items-center justify-center rounded-btn border border-line bg-card text-sm hover:border-white/20">
+          <Link key={p} href={buildHref(basePath, params, { page: p })} className="flex size-10 items-center justify-center rounded-btn border border-line bg-card text-sm hover:border-accent/40">
             {p}
           </Link>
         ),

@@ -19,7 +19,7 @@ function SearchForm({ id, className }: { id: string; className: string }) {
         name="q"
         type="search"
         placeholder="Поиск по названию или бренду"
-        className="h-11 w-full rounded-btn border border-line bg-surface px-4 text-sm placeholder:text-muted/70 hover:border-white/20"
+        className="h-11 w-full rounded-btn border border-line bg-surface px-4 text-sm placeholder:text-muted/70 hover:border-accent/40"
       />
     </form>
   );

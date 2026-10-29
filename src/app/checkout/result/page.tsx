@@ -24,32 +24,44 @@ export default async function Page({ searchParams }: Props) {
       <div className="space-y-2">
         <p className="text-sm text-muted">Заказ № <span className="font-mono text-text">{order.orderNumber}</span></p>
         <h1 className="text-3xl font-bold">
-          {order.paymentStatus === "paid_test" ? "Заказ оплачен" : order.paymentStatus === "failed" ? "Заказ отменён" : "Тестовая оплата"}
+          {order.paymentStatus === "paid_test" ? "Заказ оплачен" : order.paymentStatus === "failed" ? "Заказ отменён" : "Оплата заказа"}
         </h1>
         <Badge tone={payment.tone}>{payment.label}</Badge>
       </div>
 
       {order.paymentStatus === "unpaid" && (
-        <section className="space-y-4 rounded-card border border-accent/40 bg-accent/5 p-5">
-          {stripe && (
-            <form action={stripeCheckoutAction} className="space-y-2 border-b border-line pb-4">
+        <section className="space-y-4 rounded-card border border-line bg-card p-5">
+          {stripe ? (
+            <form action={stripeCheckoutAction} className="space-y-4">
               <input type="hidden" name="orderNumber" value={order.orderNumber} />
-              <Button type="submit" className="w-full">Оплатить картой через Stripe (тестовый режим)</Button>
-              <p className="text-xs text-muted">
-                Тестовая карта: 4242 4242 4242 4242, любой будущий срок, любой CVC. Отказ: 4000 0000 0000 0002. Реальные деньги не списываются.
-              </p>
+              <Button type="submit" className="w-full py-3 text-base">Оплатить {formatUZS(order.totalUzs)}</Button>
+              <div className="flex items-center justify-between gap-3 text-xs text-muted">
+                <span className="flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+                  Безопасная оплата через Stripe
+                </span>
+                <span className="flex gap-2">
+                  <VisaIcon />
+                  <MastercardIcon />
+                </span>
+              </div>
+              <p className="text-xs text-muted">Тестовый режим: карта 4242 4242 4242 4242, любой будущий срок и CVC. Деньги не списываются.</p>
               {stripeStatus === "error" && <p role="alert" className="text-sm text-danger">Не удалось открыть оплату Stripe. Попробуйте ещё раз.</p>}
-              {sessionId && <p role="status" className="text-sm text-danger">Оплата в Stripe не завершена. Можно попробовать снова.</p>}
+              {sessionId && <p role="status" className="text-sm text-danger">Оплата не завершена. Можно попробовать снова.</p>}
             </form>
+          ) : (
+            // Fallback while STRIPE_SECRET_KEY is not set.
+            <>
+              <p className="text-sm">
+                Это <strong>симуляция оплаты</strong>: данные карты не нужны, деньги не списываются. Выберите результат, чтобы проверить сценарий.
+              </p>
+              <form action={mockPaymentAction} className="flex flex-col gap-3 sm:flex-row">
+                <input type="hidden" name="orderNumber" value={order.orderNumber} />
+                <Button type="submit" name="outcome" value="success" className="flex-1">Симулировать успешную оплату</Button>
+                <Button type="submit" name="outcome" value="failure" variant="secondary" className="flex-1">Симулировать отказ</Button>
+              </form>
+            </>
           )}
-          <p className="text-sm">
-            Это <strong>симуляция оплаты</strong>: данные карты не нужны, деньги не списываются. Выберите результат, чтобы проверить сценарий.
-          </p>
-          <form action={mockPaymentAction} className="flex flex-col gap-3 sm:flex-row">
-            <input type="hidden" name="orderNumber" value={order.orderNumber} />
-            <Button type="submit" name="outcome" value="success" className="flex-1">Симулировать успешную оплату</Button>
-            <Button type="submit" name="outcome" value="failure" variant="secondary" className="flex-1">Симулировать отказ</Button>
-          </form>
         </section>
       )}
       {order.paymentStatus === "paid_test" && (
@@ -88,3 +100,19 @@ export default async function Page({ searchParams }: Props) {
     </div>
   );
 }
+
+const VisaIcon = () => (
+  <svg viewBox="0 0 48 32" className="h-6 w-9" role="img" aria-label="Visa">
+    <rect width="48" height="32" rx="4" fill="#fff" />
+    <text x="24" y="21" textAnchor="middle" fontFamily="Arial, sans-serif" fontSize="13" fontStyle="italic" fontWeight="900" fill="#1a1f71">VISA</text>
+  </svg>
+);
+
+const MastercardIcon = () => (
+  <svg viewBox="0 0 48 32" className="h-6 w-9" role="img" aria-label="Mastercard">
+    <rect width="48" height="32" rx="4" fill="#fff" />
+    <circle cx="19" cy="16" r="9" fill="#eb001b" />
+    <circle cx="29" cy="16" r="9" fill="#f79e1b" />
+    <path d="M24 8.5a9 9 0 0 1 0 15 9 9 0 0 1 0-15Z" fill="#ff5f00" />
+  </svg>
+);
