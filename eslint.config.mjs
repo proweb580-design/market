@@ -18,6 +18,7 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "mobile/**", // Expo app: own toolchain, see mobile/package.json
     ],
   },
 ];
