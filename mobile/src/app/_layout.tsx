@@ -15,7 +15,7 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: t.bg },
         }}
       >
-        <Stack.Screen name="index" options={{ title: "TechStore" }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="product/[slug]" options={{ title: "" }} />
       </Stack>
     </>
