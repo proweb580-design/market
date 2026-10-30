@@ -54,3 +54,15 @@ body {
     padding-inline: 24px;
   }
 }
+
+/* Telegram Mini App (/tg): map the store tokens onto the theme Telegram injects, so it follows light/dark in the client. */
+:root:has(.tg-app) {
+  color-scheme: light dark;
+  --color-bg: var(--tg-theme-bg-color, #ffffff);
+  --color-card: var(--tg-theme-bg-color, #ffffff);
+  --color-surface: var(--tg-theme-secondary-bg-color, #f6f7fb);
+  --color-text: var(--tg-theme-text-color, #292930);
+  --color-muted: var(--tg-theme-hint-color, #6b6b75);
+  --color-accent: var(--tg-theme-button-color, #2563d9);
+  --color-line: var(--tg-theme-section-separator-color, rgba(0, 0, 0, 0.08));
+}

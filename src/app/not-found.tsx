@@ -1,12 +1,16 @@
-import { LinkButton } from "@/components/ui/Button";
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
+import { NotFoundContent } from "@/components/NotFoundContent";
 
+// Unmatched URLs render in the root layout only, so this page adds the site chrome itself.
 export default function NotFound() {
   return (
-    <div className="flex flex-col items-center py-24 text-center">
-      <p className="text-6xl font-bold text-accent">404</p>
-      <h1 className="mt-4 text-2xl font-semibold">Страница не найдена</h1>
-      <p className="mt-2 text-muted">Возможно, ссылка устарела или товар больше не продаётся.</p>
-      <LinkButton href="/" className="mt-8">На главную</LinkButton>
-    </div>
+    <>
+      <Header />
+      <main id="main" className="container-page flex-1 pt-6">
+        <NotFoundContent />
+      </main>
+      <Footer />
+    </>
   );
 }

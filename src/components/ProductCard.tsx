@@ -3,7 +3,8 @@ import Link from "next/link";
 import { discountPercent, formatUZS } from "@/lib/format";
 import type { ProductListItem } from "@/lib/catalog";
 
-export function ProductCard({ product }: { product: ProductListItem }) {
+// hrefBase lets the Telegram Mini App (/tg) keep product links inside itself.
+export function ProductCard({ product, hrefBase = "/product" }: { product: ProductListItem; hrefBase?: string }) {
   const discount = discountPercent(product.priceUzs, product.oldPriceUzs);
   const inStock = product.stockQuantity > 0;
   const image = product.images[0];
@@ -29,7 +30,7 @@ export function ProductCard({ product }: { product: ProductListItem }) {
         <p className="text-xs text-muted">{product.brand}</p>
         <h3 className="line-clamp-2 text-sm">
           {/* Stretched link: whole card is clickable, one tab stop */}
-          <Link href={`/product/${product.slug}`} className="after:absolute after:inset-0 after:rounded-card">
+          <Link href={`${hrefBase}/${product.slug}`} className="after:absolute after:inset-0 after:rounded-card">
             {product.name}
           </Link>
         </h3>
